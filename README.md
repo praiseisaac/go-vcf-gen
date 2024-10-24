@@ -1,6 +1,7 @@
 Playing around with golang
 
-# Generate vcf files from csv of names and phone numbers
+# Go VCF File Generator
+Generate vcf files from csv of names and phone numbers
 
 ### Running
 `go run . path/to/csv [lines to skip]`
