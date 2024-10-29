@@ -25,6 +25,8 @@ func replaceSpecialCharacters(phone string) (string, error) {
 }
 
 func main() {
+	totalContacts := 0
+
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a file name as an argument")
 		return
@@ -91,9 +93,12 @@ func main() {
 		exportFile.WriteString(fmt.Sprintf("TEL;type=CELL;type=VOICE;type=pref:%s\n\n", formattedPhone))
 		exportFile.WriteString("END:VCARD\n\n")
 		exportFile.WriteString("\n")
+		totalContacts++
 	}
 
 	if err := scanner.Err(); err != nil {
 		fmt.Println("Error reading file:", err)
 	}
+
+	fmt.Printf("Total contacts: %d\n", totalContacts)
 }
