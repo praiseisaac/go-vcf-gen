@@ -4,7 +4,7 @@ Playing around with golang
 Generate vcf files from csv of names and phone numbers
 
 ### Running
-`go run . path/to/csv [lines to skip]`
+`go run . --file path/to/csv [ --skip {number of lines to skip} --org {organization name} ]`
 
 ### Test Run
 ```bash
@@ -12,7 +12,7 @@ touch example.csv
 echo 'first name, number' >> example.csv 
 echo 'john doe, (123)-456-7890' >> example.csv
 echo 'jane doe, (123)-456-7890' >> example.csv
-go run . example.csv 1
+go run . --file example.csv --skip 1
 ```
 
 ### Improvements that could be made

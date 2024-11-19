@@ -3,9 +3,9 @@ package main
 import (
 	"bufio"
 	"errors"
+	"flag"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -26,15 +26,18 @@ func replaceSpecialCharacters(phone string) (string, error) {
 
 func main() {
 	totalContacts := 0
+	var fileName string
+	var linesToSkip int
+	var org string
 
-	if len(os.Args) < 2 {
-		fmt.Println("Please provide a file name as an argument")
+	flag.StringVar(&fileName, "file", "", "CSV file to process")
+	flag.IntVar(&linesToSkip, "skip", 0, "Number of lines to skip")
+	flag.StringVar(&org, "org", "", "Organization name")
+	flag.Parse()
+
+	if fileName == "" {
+		fmt.Println("Please provide a file name using -file flag")
 		return
-	}
-	fileName := os.Args[1]
-	linesToSkip := 0
-	if len(os.Args) > 2 {
-		linesToSkip, _ = strconv.Atoi(os.Args[2])
 	}
 
 	file, err := os.Open(fileName)
@@ -107,7 +110,9 @@ func main() {
 		exportFile.WriteString(fmt.Sprintf("N:%s;%s;;;\n\n", lastName, firstName))
 		exportFile.WriteString(fmt.Sprintf("FN:%s\n\n", name))
 		exportFile.WriteString(fmt.Sprintf("TEL;type=CELL;type=VOICE;type=pref:%s\n\n", formattedPhone))
-		exportFile.WriteString("ORG:Pickleball;\n\n")
+		if org != "" {
+			exportFile.WriteString(fmt.Sprintf("ORG:%s;\n\n", org))
+		}
 		if birthday != "" {
 			exportFile.WriteString(fmt.Sprintf("BDAY:%s\n\n", birthday))
 		}
