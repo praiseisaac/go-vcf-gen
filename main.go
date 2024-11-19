@@ -60,22 +60,38 @@ func main() {
 			continue
 		}
 
+		// Split row into components
+		parts := strings.Split(line, ",")
+		if len(parts) < 3 {
+			fmt.Println("Invalid line format:", line)
+			continue
+		}
+
 		// Get name
-		name := strings.Split(line, ",")[0]
+		name := parts[0]
 		nameParts := strings.Split(name, " ")
 		lastName := nameParts[len(nameParts)-1]
 		firstName := strings.Join(nameParts[:len(nameParts)-1], " ")
 
 		// Get phone number	
-		phone := strings.Split(line, ",")[1]
+		phone := parts[1]
 		formattedPhone, err := replaceSpecialCharacters(phone)
 		if err != nil {
 			fmt.Println("Error:", err)
 			continue
 		}
 
+		// Get birthday
+		birthday := parts[2]
+		if birthday != "" {
+			dateParts := strings.Split(birthday, "/")
+			if len(dateParts) == 3 {
+				birthday = dateParts[2] + "-" + fmt.Sprintf("%02s", dateParts[0]) + "-" + fmt.Sprintf("%02s", dateParts[1])
+			}
+		}
+
 		// Create vcf file
-		vcfFile := fmt.Sprintf("cards/%s.%s.vcf", strings.Split(line, ",")[0], formattedPhone)
+		vcfFile := fmt.Sprintf("cards/%s.%s.vcf", parts[0], formattedPhone)
 		formattedPhone = "+1" + formattedPhone
 
 		exportFile, err := os.Create(vcfFile)
@@ -91,6 +107,10 @@ func main() {
 		exportFile.WriteString(fmt.Sprintf("N:%s;%s;;;\n\n", lastName, firstName))
 		exportFile.WriteString(fmt.Sprintf("FN:%s\n\n", name))
 		exportFile.WriteString(fmt.Sprintf("TEL;type=CELL;type=VOICE;type=pref:%s\n\n", formattedPhone))
+		exportFile.WriteString("ORG:Pickleball;\n\n")
+		if birthday != "" {
+			exportFile.WriteString(fmt.Sprintf("BDAY:%s\n\n", birthday))
+		}
 		exportFile.WriteString("END:VCARD\n\n")
 		exportFile.WriteString("\n")
 		totalContacts++
